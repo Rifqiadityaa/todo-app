@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Icon,
-  Stack,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Icon, Text, useDisclosure } from "@chakra-ui/react";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -13,10 +6,12 @@ import {
 } from "@dnd-kit/sortable";
 import { FaPlus } from "react-icons/fa6";
 import DraggableItem from "../DraggableItem";
-import ModalTaskDetail from "../ModalTaskDetails";
+import ModalTodoDetail from "../ModalTaskDetails";
 
 const DroppableContainer = (props) => {
-  const { id, items } = props;
+  const { id, todosId } = props;
+
+  const isStatusTodo = id === "To Do";
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -26,16 +21,16 @@ const DroppableContainer = (props) => {
 
   return (
     <>
-      <ModalTaskDetail isOpen={isOpen} onClose={onClose} />
+      <ModalTodoDetail isOpen={isOpen} onClose={onClose} />
       <SortableContext
         id={id}
-        items={items}
+        items={todosId}
         strategy={verticalListSortingStrategy}
       >
         <Box
           ref={setNodeRef}
           w={"100%"}
-          p={5}
+          p={"1rem"}
           bgColor={"#D5CCFF"}
           borderRadius={"0.5rem"}
           h={"fit-content"}
@@ -47,15 +42,15 @@ const DroppableContainer = (props) => {
             mb={"1rem"}
           >
             <Text fontWeight={"bold"}>{id}</Text>
-            <Button variant={"ghost"} onClick={onOpen}>
-              <Icon as={FaPlus} />
-            </Button>
+            {isStatusTodo && (
+              <Button variant={"ghost"} onClick={onOpen}>
+                <Icon as={FaPlus} />
+              </Button>
+            )}
           </Box>
-          <Stack gap={"1rem"}>
-            {items.map((item) => (
-              <DraggableItem key={item} id={item} item={item} />
-            ))}
-          </Stack>
+          {todosId.map((todoId) => (
+            <DraggableItem key={todoId} id={todoId} onOpen={onOpen} />
+          ))}
         </Box>
       </SortableContext>
     </>

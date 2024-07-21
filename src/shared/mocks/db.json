@@ -1,0 +1,76 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "name": "Create Wireframes",
+      "description": "Create wireframes for the",
+      "dueDate": "2022-12-31",
+      "priority": "Low",
+      "status": "Completed",
+      "group": "Design"
+    },
+    {
+      "id": 3,
+      "name": "Refactor",
+      "description": "Implement react query",
+      "dueDate": "2024-07-24",
+      "priority": "High",
+      "status": "In Progress",
+      "group": "Development"
+    },
+    {
+      "id": 4,
+      "name": "update delpoyment",
+      "description": "Develop backend",
+      "dueDate": "2024-07-05",
+      "priority": "High",
+      "status": "To Do",
+      "group": "Development"
+    },
+    {
+      "id": 5,
+      "name": "Testing Black Box",
+      "description": "testing",
+      "dueDate": "2024-07-06",
+      "priority": "Medium",
+      "status": "Completed",
+      "group": "Testing"
+    },
+    {
+      "id": 6,
+      "name": "Testing katalon",
+      "description": "testing",
+      "dueDate": "2024-07-06",
+      "priority": "Medium",
+      "status": "Completed",
+      "group": "Testing"
+    },
+    {
+      "id": 7,
+      "name": "Unit Test",
+      "description": "testing",
+      "dueDate": "2024-07-06",
+      "priority": "Medium",
+      "status": "In Progress",
+      "group": "Testing"
+    },
+    {
+      "name": "update delpoyment",
+      "description": "update delpoyment",
+      "priority": "High",
+      "status": "To Do",
+      "id": 9,
+      "dueDate": "2024-07-05",
+      "group": "Development"
+    },
+    {
+      "name": "create new backend service",
+      "description": "create new backend service",
+      "dueDate": "2024-07-06",
+      "priority": "Medium",
+      "status": "To Do",
+      "id": 10,
+      "group": "Development"
+    }
+  ]
+}

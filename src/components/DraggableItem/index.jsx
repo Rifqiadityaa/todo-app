@@ -1,14 +1,16 @@
+import { useTodoContext } from "@/shared/context/todoContext";
 import { Box } from "@chakra-ui/react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMemo } from "react";
 import TodoCard from "../TodoCard";
 
 const DraggableItem = (props) => {
-  const { id, item, isOverlay } = props;
+  const { todos } = useTodoContext();
 
-  if (isOverlay) {
-    return <TodoCard item={item} />;
-  }
+  const { id, onOpen } = props;
+
+  const todo = useMemo(() => todos.find((todo) => todo.id === id), [todos, id]);
 
   const { setNodeRef, listeners, attributes, transform, transition } =
     useSortable({
@@ -18,7 +20,6 @@ const DraggableItem = (props) => {
   return (
     <Box
       ref={setNodeRef}
-      borderRadius={"0.3rem"}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -26,7 +27,7 @@ const DraggableItem = (props) => {
       {...listeners}
       {...attributes}
     >
-      <TodoCard item={item} />
+      <TodoCard todo={todo} onOpen={onOpen} />
     </Box>
   );
 };

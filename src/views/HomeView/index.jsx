@@ -1,7 +1,20 @@
 "use client";
 
 import DroppableContainer from "@/components/DroppableContainer";
-import { Grid, GridItem } from "@chakra-ui/react";
+import MenuDropdown from "@/components/MenuDropdown";
+import ModalStatistics from "@/components/ModalStatistics";
+import { TodoContext } from "@/shared/context/todoContext";
+import useDebounce from "@/shared/hooks/useDebounce";
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Icon,
+  Input,
+  Stack,
+  useDisclosure,
+} from "@chakra-ui/react";
 import {
   DndContext,
   KeyboardSensor,
@@ -11,27 +24,34 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaChartPie } from "react-icons/fa6";
 
 const HomeView = () => {
-  const [items, setItems] = useState({
-    "To Do": ["Create Wireframes", "Design Landing Page"],
-    "In Progress": ["Develop Landing Page"],
-    Completed: ["Launch Landing Page"],
-  });
+  const [todos, setTodos] = useState({});
+  const [todosId, setTodosId] = useState({});
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor)
   );
 
   const findContainer = (id) => {
-    if (id in items) {
+    if (id in todosId) {
       return id;
     }
 
-    return Object.keys(items).find((key) => items[key].includes(id));
+    return Object.keys(todosId).find((key) => todosId[key].includes(id));
   };
 
   function handleDragOver(event) {
@@ -50,7 +70,7 @@ const HomeView = () => {
       return;
     }
 
-    setItems((prev) => {
+    setTodosId((prev) => {
       const activeItems = prev[activeContainer];
       const overItems = prev[overContainer];
 
@@ -78,14 +98,14 @@ const HomeView = () => {
         ],
         [overContainer]: [
           ...prev[overContainer].slice(0, newIndex),
-          items[activeContainer][activeIndex],
+          todosId[activeContainer][activeIndex],
           ...prev[overContainer].slice(newIndex, prev[overContainer].length),
         ],
       };
     });
   }
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
     const { id } = active;
 
@@ -100,20 +120,84 @@ const HomeView = () => {
       return;
     }
 
-    const activeIndex = items[activeContainer].indexOf(active.id);
-    const overIndex = items[overContainer].indexOf(over?.id);
+    const activeIndex = todosId[activeContainer].indexOf(active.id);
+    const overIndex = todosId[overContainer].indexOf(over?.id);
 
     if (activeIndex !== overIndex) {
-      setItems((items) => ({
-        ...items,
+      setTodosId((todoId) => ({
+        ...todoId,
         [overContainer]: arrayMove(
-          items[overContainer],
+          todoId[overContainer],
           activeIndex,
           overIndex
         ),
       }));
     }
+
+    const todoToUpdate = todos.find((todo) => todo.id === active.id);
+
+    await updateTodo(id, { ...todoToUpdate, status: overContainer });
   };
+
+  const getItemsData = async (params) => {
+    const response = await fetch(
+      "http://localhost:8000/todos?" + new URLSearchParams(params).toString(),
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.length) {
+      setTodos(data);
+
+      setTodosId(() => {
+        return {
+          "To Do": data
+            .filter((todo) => todo.status === "To Do")
+            .map((todo) => todo.id),
+          "In Progress": data
+            .filter((todo) => todo.status === "In Progress")
+            .map((todo) => todo.id),
+          Completed: data
+            .filter((todo) => todo.status === "Completed")
+            .map((todo) => todo.id),
+        };
+      });
+    }
+  };
+
+  const updateTodo = async (id, payload) => {
+    await fetch(`http://localhost:8000/todos/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  };
+
+  const handleSearch = async (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const contextValue = {
+    todos,
+    todosId,
+    getItemsData,
+    selectedTodo,
+    setSelectedTodo,
+    updateTodo,
+  };
+
+  useEffect(() => {
+    getItemsData();
+  }, []);
+
+  useEffect(() => {
+    getItemsData({ name_like: debouncedSearchQuery });
+  }, [debouncedSearchQuery]);
 
   return (
     <DndContext
@@ -122,20 +206,36 @@ const HomeView = () => {
       onDragOver={handleDragOver}
       sensors={sensors}
     >
-      <Grid
-        templateColumns={"repeat(3, 1fr)"}
-        gap={"2rem"}
-        bgColor={"#2B1887"}
-        p={"10rem"}
-        h={"100%"}
-        overflow={"scroll"}
-      >
-        {Object.keys(items).map((key, i) => (
-          <GridItem key={key}>
-            <DroppableContainer id={key} items={items[key]} />
-          </GridItem>
-        ))}
-      </Grid>
+      <TodoContext.Provider value={contextValue}>
+        <Stack spacing={"1rem"} mb={"2rem"} alignItems={"center"}>
+          <Input
+            type="tel"
+            placeholder="Search todo"
+            color={"white"}
+            w={{ base: "100%", sm: "30%" }}
+            onChange={handleSearch}
+            textAlign={"center"}
+            borderRadius={"0.5rem"}
+          />
+          <Box display={"flex"} gap={"0.5rem"}>
+            <MenuDropdown />
+            <ModalStatistics isOpen={isOpen} onClose={onClose} />
+            <Button variant={"ghost"} onClick={onOpen}>
+              <Icon as={FaChartPie} color={"white"} />
+            </Button>
+          </Box>
+        </Stack>
+        <Grid
+          templateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(3, 1fr)" }}
+          gap={"2rem"}
+        >
+          {Object.keys(todosId).map((key) => (
+            <GridItem key={key}>
+              <DroppableContainer id={key} todosId={todosId[key]} />
+            </GridItem>
+          ))}
+        </Grid>
+      </TodoContext.Provider>
     </DndContext>
   );
 };

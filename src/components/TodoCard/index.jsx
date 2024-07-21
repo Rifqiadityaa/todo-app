@@ -1,18 +1,27 @@
+import { useTodoContext } from "@/shared/context/todoContext";
 import { Box, Card, CardBody, Stack, Text } from "@chakra-ui/react";
 
 const TodoCard = (props) => {
-  const { item, isOverlay } = props;
+  const { setSelectedTodo } = useTodoContext();
 
-  if (isOverlay) {
-    <Card bgColor={"#F4F2FF"}>test</Card>;
-  }
+  const { todo, onOpen } = props;
+
+  if (!todo) return null;
 
   return (
-    <Card bgColor={"#F4F2FF"} style={{ touchAction: "none" }}>
+    <Card
+      bgColor={"#F4F2FF"}
+      mb={"1rem"}
+      style={{ touchAction: "none" }}
+      onClick={() => {
+        setSelectedTodo(todo);
+        onOpen();
+      }}
+    >
       <CardBody>
         <Stack gap={"1rem"}>
           <Text pt="2" fontSize="smaller" fontWeight={"bold"}>
-            {item}
+            {todo.name}
           </Text>
           <Box
             display={"flex"}
@@ -21,19 +30,17 @@ const TodoCard = (props) => {
           >
             <Stack gap={"0.8rem"}>
               <Text fontSize="small" color={"#A09F9F"} maxW={"200px"}>
-                Create wireframes for the new landing page
+                {todo.description}
               </Text>
-              <Box display={"flex"} gap={"1rem"}>
-                <Text fontSize="small" color={"#A09F9F"}>
-                  12/07/2021
-                </Text>
-                <Text fontSize="small" color={"#A09F9F"}>
-                  High
-                </Text>
-              </Box>
+              <Text fontSize="small" color={"#A09F9F"}>
+                Due {todo.dueDate}
+              </Text>
+              <Text fontSize="small" color={"#A09F9F"}>
+                {todo.priority}
+              </Text>
             </Stack>
             <Text fontSize="small" color={"#A09F9F"}>
-              Project
+              {todo.group}
             </Text>
           </Box>
         </Stack>
