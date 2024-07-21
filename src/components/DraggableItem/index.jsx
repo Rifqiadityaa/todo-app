@@ -18,9 +18,7 @@ const DraggableItem = (props) => {
   return (
     <Box
       ref={setNodeRef}
-      bg={"#F4F2FF"}
       borderRadius={"0.3rem"}
-      p={5}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
