@@ -1,4 +1,5 @@
 import ApplicationProviders from "@/components/ApplicationProviders";
+import { Box } from "@chakra-ui/react";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -13,7 +14,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={dmSans.className}>
-        <ApplicationProviders>{children}</ApplicationProviders>
+        <ApplicationProviders>
+          <Box p={{ base: "3rem", lg: "10rem" }} h={"100%"}>
+            {children}
+          </Box>
+        </ApplicationProviders>
       </body>
     </html>
   );
