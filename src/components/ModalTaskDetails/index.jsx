@@ -157,6 +157,7 @@ const ModalTodoDetail = (props) => {
                   bgColor={"#D5CCFF"}
                   type="submit"
                   color={"#F4F2FF"}
+                  isDisabled={!todoName}
                 >
                   Submit
                 </Button>

@@ -8,6 +8,17 @@ const TodoCard = (props) => {
 
   if (!todo) return null;
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "red";
+      case "Medium":
+        return "orange";
+      case "Low":
+        return "green";
+    }
+  };
+
   return (
     <Card
       bgColor={"#F4F2FF"}
@@ -33,9 +44,9 @@ const TodoCard = (props) => {
                 {todo.description}
               </Text>
               <Text fontSize="small" color={"#A09F9F"}>
-                Due {todo.dueDate}
+                {todo.dueDate && <Text> Due {todo.dueDate}</Text>}
               </Text>
-              <Text fontSize="small" color={"#A09F9F"}>
+              <Text fontSize="small" color={getPriorityColor(todo.priority)}>
                 {todo.priority}
               </Text>
             </Stack>

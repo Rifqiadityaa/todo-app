@@ -76,6 +76,7 @@ const FilterByDatePopover = () => {
                   await getItemsData();
                   onClose();
                 }}
+                isDisabled={!startDate || !endDate}
               >
                 Filter
               </Button>
