@@ -1,6 +1,7 @@
 "use client";
 
 import DroppableContainer from "@/components/DroppableContainer";
+import FilterByDatePopover from "@/components/FilterByDatePopover";
 import MenuDropdown from "@/components/MenuDropdown";
 import ModalStatistics from "@/components/ModalStatistics";
 import { TodoContext } from "@/shared/context/todoContext";
@@ -32,6 +33,8 @@ const HomeView = () => {
   const [todosId, setTodosId] = useState({});
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -153,6 +156,35 @@ const HomeView = () => {
       setTodos(data);
 
       setTodosId(() => {
+        if (startDate && endDate) {
+          return {
+            "To Do": data
+              .filter(
+                (todo) =>
+                  todo.status === "To Do" &&
+                  new Date(todo.dueDate) >= startDate &&
+                  new Date(todo.dueDate) <= endDate
+              )
+              .map((todo) => todo.id),
+            "In Progress": data
+              .filter(
+                (todo) =>
+                  todo.status === "In Progress" &&
+                  new Date(todo.dueDate) >= startDate &&
+                  new Date(todo.dueDate) <= endDate
+              )
+              .map((todo) => todo.id),
+            Completed: data
+              .filter(
+                (todo) =>
+                  todo.status === "Completed" &&
+                  new Date(todo.dueDate) >= startDate &&
+                  new Date(todo.dueDate) <= endDate
+              )
+              .map((todo) => todo.id),
+          };
+        }
+
         return {
           "To Do": data
             .filter((todo) => todo.status === "To Do")
@@ -165,6 +197,9 @@ const HomeView = () => {
             .map((todo) => todo.id),
         };
       });
+
+      setEndDate("");
+      setStartDate("");
     }
   };
 
@@ -189,6 +224,8 @@ const HomeView = () => {
     selectedTodo,
     setSelectedTodo,
     updateTodo,
+    setStartDate,
+    setEndDate,
   };
 
   useEffect(() => {
@@ -212,15 +249,22 @@ const HomeView = () => {
             type="tel"
             placeholder="Search todo"
             color={"white"}
-            w={{ base: "100%", sm: "30%" }}
+            w={{ base: "100%", sm: "40%" }}
             onChange={handleSearch}
             textAlign={"center"}
             borderRadius={"0.5rem"}
           />
           <Box display={"flex"} gap={"0.5rem"}>
+            <FilterByDatePopover />
             <MenuDropdown />
             <ModalStatistics isOpen={isOpen} onClose={onClose} />
-            <Button variant={"ghost"} onClick={onOpen}>
+            <Button
+              variant={"ghost"}
+              onClick={onOpen}
+              _hover={{
+                bg: "#D5CCFF",
+              }}
+            >
               <Icon as={FaChartPie} color={"white"} />
             </Button>
           </Box>

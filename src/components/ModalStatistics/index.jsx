@@ -32,39 +32,43 @@ const ModalStatistics = (props) => {
           <ModalBody display={"flex"} justifyContent={"space-between"}>
             <Box w={"fit-content"} textAlign={"center"}>
               <CircularProgress
-                value={(totalToDo / totalTodos) * 100}
+                value={Math.round((totalToDo / totalTodos) * 100).toFixed(0)}
                 color="green.400"
                 size={"100px"}
                 mb={"0.5rem"}
               >
                 <CircularProgressLabel>
-                  {(totalToDo / totalTodos) * 100}%
+                  {Math.round((totalToDo / totalTodos) * 100).toFixed(0)}%
                 </CircularProgressLabel>
               </CircularProgress>
               <Text>To Do</Text>
             </Box>
             <Box w={"fit-content"} textAlign={"center"}>
               <CircularProgress
-                value={(totalInProgress / totalTodos) * 100}
+                value={Math.round((totalInProgress / totalTodos) * 100).toFixed(
+                  0
+                )}
                 color="green.400"
                 size={"100px"}
                 mb={"0.5rem"}
               >
                 <CircularProgressLabel>
-                  {(totalInProgress / totalTodos) * 100}%
+                  {Math.round((totalInProgress / totalTodos) * 100).toFixed(0)}%
                 </CircularProgressLabel>
               </CircularProgress>
               <Text>In Progress</Text>
             </Box>
             <Box w={"fit-content"} textAlign={"center"}>
               <CircularProgress
-                value={(totalCompleted / totalTodos) * 100}
+                value={Math.round((totalCompleted / totalTodos) * 100).toFixed(
+                  0
+                )}
                 color="green.400"
                 size={"100px"}
                 mb={"0.5rem"}
               >
                 <CircularProgressLabel>
-                  {(totalCompleted / totalTodos) * 100}%
+                  {Math.round((totalCompleted / totalTodos) * 100).toFixed(0)}%
                 </CircularProgressLabel>
               </CircularProgress>
               <Text>Completed</Text>
