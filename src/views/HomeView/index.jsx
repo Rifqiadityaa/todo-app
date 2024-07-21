@@ -162,24 +162,24 @@ const HomeView = () => {
               .filter(
                 (todo) =>
                   todo.status === "To Do" &&
-                  new Date(todo.dueDate) >= startDate &&
-                  new Date(todo.dueDate) <= endDate
+                  new Date(todo.dueDate) >= new Date(startDate) &&
+                  new Date(todo.dueDate) <= new Date(endDate)
               )
               .map((todo) => todo.id),
             "In Progress": data
               .filter(
                 (todo) =>
                   todo.status === "In Progress" &&
-                  new Date(todo.dueDate) >= startDate &&
-                  new Date(todo.dueDate) <= endDate
+                  new Date(todo.dueDate) >= new Date(startDate) &&
+                  new Date(todo.dueDate) <= new Date(endDate)
               )
               .map((todo) => todo.id),
             Completed: data
               .filter(
                 (todo) =>
                   todo.status === "Completed" &&
-                  new Date(todo.dueDate) >= startDate &&
-                  new Date(todo.dueDate) <= endDate
+                  new Date(todo.dueDate) >= new Date(startDate) &&
+                  new Date(todo.dueDate) <= new Date(endDate)
               )
               .map((todo) => todo.id),
           };
@@ -226,6 +226,8 @@ const HomeView = () => {
     updateTodo,
     setStartDate,
     setEndDate,
+    startDate,
+    endDate,
   };
 
   useEffect(() => {
